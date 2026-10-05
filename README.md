@@ -38,43 +38,7 @@ A lightweight, frontend-only web app for building a clean, A4-ready resume in th
 - **Private by design.** No storage and no server. The only network requests load the PDF library and the font.
 - **Empty by default.** The form starts blank, and a "Clear all" button resets it.
 
-## Screenshot
 
-Add a screenshot of the app to `docs/screenshot.png` and uncomment the line below.
-
-<!-- ![Resume Builder](docs/screenshot.png) -->
-
-## Getting Started
-
-### Run directly
-
-1. Download `index.html`.
-2. Open it in any modern browser (Chrome, Edge, Firefox, Safari).
-
-An internet connection is required on first load so the browser can fetch the PDF library and the font.
-
-### Run with a local server
-
-```bash
-git clone https://github.com/YOUR-USERNAME/resume-builder.git
-cd resume-builder
-python -m http.server 8000
-```
-
-Then open `http://localhost:8000`.
-
-### Deploy with GitHub Pages
-
-1. Open **Settings → Pages** in your repository.
-2. Under **Source**, choose **Deploy from a branch**, then select `main` and `/ (root)`.
-3. Save. The site will be available at `https://YOUR-USERNAME.github.io/resume-builder/`.
-
-## Usage
-
-1. Fill in the form sections.
-2. Review the live preview.
-3. Choose the resume language (English or Arabic) from the top bar.
-4. Click **Download PDF**. The file is named after the name you entered, for example `Your_Name_CV.pdf`.
 
 Notes:
 
