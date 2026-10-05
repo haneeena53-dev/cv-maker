@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>منشئ السيرة الذاتية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{
+  --bg:#f1f4f9; --panel:#ffffff; --ink:#1b2433; --muted:#6b7688; --line:#e3e8f0;
+  --brand:#2f5bea; --brand-dark:#2447c0; --brand-soft:#eaf0ff; --danger:#d64545; --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo','Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+.topbar{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.15rem}
+.brand .logo{width:34px;height:34px;border-radius:9px;background:var(--brand);color:#fff;display:grid;place-items:center}
+.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.top-actions label{font-size:.85rem;color:var(--muted)}
+select,input,textarea{font-family:inherit;font-size:.95rem;color:var(--ink)}
+.top-actions select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.btn{font-family:inherit;cursor:pointer;border:0;border-radius:9px;padding:9px 18px;font-weight:600;font-size:.95rem;transition:.15s}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--brand-dark)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+.btn-ghost{background:var(--brand-soft);color:var(--brand)}
+.btn-ghost:hover{background:#dbe6ff}
+.btn-clear{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn-clear:hover{color:var(--danger);border-color:var(--danger)}
+
+.layout{display:grid;grid-template-columns:minmax(380px,1fr) minmax(0,1.1fr);gap:24px;padding:24px;max-width:1500px;margin:0 auto;align-items:start}
+.form-col{display:flex;flex-direction:column;gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.card h2{font-size:1.05rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card h2 .num{width:24px;height:24px;border-radius:50%;background:var(--brand-soft);color:var(--brand);font-size:.8rem;display:grid;place-items:center}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.fgrid .full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.field label{font-size:.82rem;color:var(--muted);font-weight:600}
+.field input,.field textarea{padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#fbfcfe;transition:.15s;width:100%}
+.field textarea{resize:vertical;min-height:84px}
+.field input:focus,.field textarea:focus,.skill-box:focus-within{outline:none;border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px rgba(47,91,234,.12)}
+.entry{border:1px dashed var(--line);border-radius:10px;padding:14px 14px 2px;margin-bottom:12px;background:#fcfdff}
+.entry-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:.85rem;color:var(--muted);font-weight:600}
+.remove{background:none;border:0;color:var(--danger);cursor:pointer;font-family:inherit;font-size:.82rem}
+.skill-box{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid var(--line);border-radius:9px;background:#fbfcfe;min-height:46px}
+.skill-box input{border:0;background:transparent;flex:1;min-width:120px;padding:4px;outline:none}
+.chip{background:var(--brand-soft);color:var(--brand);border-radius:20px;padding:2px 10px;font-size:.85rem;display:inline-flex;align-items:center;gap:6px}
+.chip button{background:none;border:0;color:var(--brand);cursor:pointer;font-size:1rem;line-height:1}
+.hint{font-size:.78rem;color:var(--muted);margin-top:6px}
+
+/* ---------- Preview ---------- */
+.preview-col{position:sticky;top:78px}
+.preview-label{font-size:.85rem;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.preview-label::before{content:"";width:8px;height:8px;border-radius:50%;background:#2fb86a}
+.preview-viewport{width:100%;overflow:hidden;border-radius:var(--radius);box-shadow:0 8px 30px rgba(20,35,70,.12);background:#fff}
+.preview-scaler{transform-origin:top left;width:794px}
+html[dir="rtl"] .preview-scaler{transform-origin:top right}
+.sheet{width:794px;min-height:1123px;background:#fff;color:#1a1a1a;padding:46px 54px;font-family:'Cairo','Segoe UI',Arial,sans-serif;font-size:13px;line-height:1.6}
+.r-name{font-size:27px;font-weight:700;color:#111;line-height:1.25}
+.r-contact{margin-top:6px;color:#333;font-size:12.5px;padding-bottom:12px;border-bottom:2px solid #1a1a1a;margin-bottom:6px;word-break:break-word}
+.r-contact .sep{margin:0 6px;color:#888}
+.r-sec{margin-top:16px}
+.r-sec h3{font-size:13.5px;letter-spacing:.05em;text-transform:uppercase;color:#111;border-bottom:1px solid #999;padding-bottom:3px;margin-bottom:8px;font-weight:700}
+.r-item{margin-bottom:10px;page-break-inside:avoid}
+.r-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.r-item b{font-size:13.5px;color:#111}
+.r-sub{color:#333;font-weight:600}
+.r-date{color:#555;font-size:12px;white-space:nowrap}
+.r-text{white-space:pre-line;color:#2b2b2b}
+.r-list{margin:3px 0 0;padding-inline-start:20px}
+.r-list li{margin-bottom:2px}
+.empty-state{display:grid;place-items:center;text-align:center;min-height:900px;color:#9aa4b5}
+.empty-state .big{font-size:54px;margin-bottom:10px}
+.empty-state p{font-size:15px}
+
+@media (max-width:1000px){
+  .layout{grid-template-columns:1fr;padding:14px}
+  .preview-col{position:static}
+  .topbar{padding:10px 14px}
+}
+@media (max-width:520px){ .fgrid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span class="logo">📄</span> منشئ السيرة الذاتية</div>
+  <div class="top-actions">
+    <label for="lang">لغة السيرة:</label>
+    <select id="lang">
+      <option value="en">English</option>
+      <option value="ar">العربية</option>
+    </select>
+    <button class="btn btn-clear" id="clearBtn" type="button">مسح الكل</button>
+    <button class="btn btn-primary" id="pdfBtn" type="button" disabled>⬇ تحميل كـ PDF</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="form-col">
+
+    <div class="card">
+      <h2><span class="num">1</span> الاسم وبيانات التواصل</h2>
+      <div class="fgrid">
+        <div class="field full"><label for="fullName">الاسم الكامل</label><input id="fullName" type="text" autocomplete="off"></div>
+        <div class="field"><label for="phone">رقم الهاتف</label><input id="phone" type="tel" dir="ltr" autocomplete="off"></div>
+        <div class="field"><label for="email">البريد الإلكتروني</label><input id="email" type="email" dir="ltr" autocomplete="off"></div>
+        <div class="field"><label for="link">رابط LinkedIn</label><input id="link" type="text" dir="ltr" autocomplete="off"></div>
+        <div class="field"><label for="dob">تاريخ الميلاد (اختياري)</label><input id="dob" type="text" autocomplete="off"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">2</span> الملخص المهني</h2>
+      <div class="field"><textarea id="summary" aria-label="الملخص المهني"></textarea></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">3</span> التعليم</h2>
+      <div data-list="edu"></div>
+      <button class="btn btn-ghost" type="button" data-add="edu">+ إضافة تعليم آخر</button>
+      <h2 style="margin:20px 0 12px;font-size:.95rem">مشروع التخرج / المشاريع (تظهر ضمن قسم التعليم)</h2>
+      <div data-list="proj"></div>
+      <button class="btn btn-ghost" type="button" data-add="proj">+ إضافة مشروع آخر</button>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">4</span> التدريب والخبرات العملية</h2>
+      <div data-list="train"></div>
+      <button class="btn btn-ghost" type="button" data-add="train">+ إضافة تدريب / خبرة أخرى</button>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">5</span> المهارات التقنية</h2>
+      <div data-list="tech"></div>
+      <button class="btn btn-ghost" type="button" data-add="tech">+ إضافة فئة مهارات أخرى</button>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">6</span> الكفاءات الأساسية</h2>
+      <div class="skill-box"><div data-chips style="display:contents"></div><input id="compInput" type="text" aria-label="إضافة كفاءة" autocomplete="off"></div>
+      <p class="hint">اكتب الكفاءة ثم اضغط Enter أو فاصلة (,  ،) لإضافتها. يمكنك لصق عدة كفاءات مفصولة بفواصل.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">7</span> اللغات</h2>
+      <div data-list="lang"></div>
+      <button class="btn btn-ghost" type="button" data-add="lang">+ إضافة لغة أخرى</button>
+    </div>
+  </section>
+
+  <section class="preview-col">
+    <div class="preview-label">معاينة حية</div>
+    <div class="preview-viewport" id="viewport">
+      <div class="preview-scaler" id="scaler"><div class="sheet" id="resume"></div></div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Schema for repeatable sections ----------
+  // field: [key, Arabic label, type, layout]
+  const LISTS = {
+    edu: { item: 'تعليم', fields: [
+      ['degree', 'الدرجة العلمية والقسم', 'text', 'full'],
+      ['school', 'الجامعة', 'text', 'full'],
+      ['period', 'الفترة الزمنية', 'text'],
+      ['gpa', 'المعدل التراكمي (GPA)', 'text'],
+      ['extra', 'إنجازات أو ملاحظات (سطر لكل نقطة)', 'textarea', 'full']
+    ]},
+    proj: { item: 'مشروع', fields: [
+      ['title', 'عنوان المشروع', 'text', 'full'],
+      ['details', 'تفاصيل المشروع (سطر لكل نقطة)', 'textarea', 'full']
+    ]},
+    train: { item: 'تدريب', fields: [
+      ['org', 'الجهة / الشركة', 'text', 'full'],
+      ['desc', 'الوصف', 'textarea', 'full']
+    ]},
+    tech: { item: 'فئة', fields: [
+      ['cat', 'اسم الفئة', 'text'],
+      ['items', 'المهارات (مفصولة بفواصل)', 'text']
+    ]},
+    lang: { item: 'لغة', fields: [
+      ['name', 'اللغة', 'text'],
+      ['level', 'المستوى', 'text']
+    ]}
+  };
+
+  const blank = (k) => Object.fromEntries(LISTS[k].fields.map(f => [f[0], '']));
+
+  const state = {
+    lang: 'en',
+    name: '', phone: '', email: '', link: '', dob: '',
+    summary: '',
+    edu: [blank('edu')], proj: [blank('proj')], train: [blank('train')],
+    tech: [blank('tech')], lang_: [], comp: [],
+    langs: [blank('lang')]
+  };
+  // map list key -> state key
+  const SK = { edu: 'edu', proj: 'proj', train: 'train', tech: 'tech', lang: 'langs' };
+
+  const H = {
+    en: { summary: 'Professional Summary', edu: 'Education', train: 'Internships & Training',
+          tech: 'Technical Skills', comp: 'Key Competencies', lang: 'Languages',
+          phone: 'Phone', email: 'Email', link: 'LinkedIn', dob: 'Date of Birth', gpa: 'GPA',
+          empty: 'Start filling the form and your resume will appear here' },
+    ar: { summary: 'الملخص المهني', edu: 'التعليم', train: 'التدريب والخبرات العملية',
+          tech: 'المهارات التقنية', comp: 'الكفاءات الأساسية', lang: 'اللغات',
+          phone: 'الهاتف', email: 'البريد الإلكتروني', link: 'LinkedIn', dob: 'تاريخ الميلاد', gpa: 'المعدل',
+          empty: 'ابدأ بملء النموذج وستظهر سيرتك الذاتية هنا مباشرة' }
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const tr = (s) => (s || '').trim();
+  const lines = (s) => String(s || '').split('\n').map(tr).filter(Boolean);
+
+  // ---------- Simple fields ----------
+  const simple = { fullName: 'name', phone: 'phone', email: 'email', link: 'link', dob: 'dob', summary: 'summary' };
+  Object.keys(simple).forEach(id => $(id).addEventListener('input', e => { state[simple[id]] = e.target.value; renderPreview(); }));
+  $('lang').addEventListener('change', e => { state.lang = e.target.value; renderPreview(); });
+
+  // ---------- Repeatable sections: form ----------
+  function entryHTML(k, item, i) {
+    const def = LISTS[k], arr = state[SK[k]];
+    const fields = def.fields.map(([key, label, type, layout]) => {
+      const cls = 'field' + (layout === 'full' ? ' full' : '');
+      const attrs = `data-k="${k}" data-i="${i}" data-f="${key}"`;
+      const control = type === 'textarea'
+        ? `<textarea ${attrs}>${esc(item[key])}</textarea>`
+        : `<input type="text" ${attrs} value="${esc(item[key])}" autocomplete="off">`;
+      return `<div class="${cls}"><label>${label}</label>${control}</div>`;
+    }).join('');
+    return `<div class="entry">
+      <div class="entry-head"><span>${def.item} #${i + 1}</span>
+        ${arr.length > 1 ? `<button type="button" class="remove" data-rm="${k}" data-i="${i}">حذف</button>` : ''}
+      </div><div class="fgrid">${fields}</div></div>`;
+  }
+  function renderForm(only) {
+    Object.keys(LISTS).forEach(k => {
+      if (only && only !== k) return;
+      document.querySelector(`[data-list="${k}"]`).innerHTML = state[SK[k]].map((it, i) => entryHTML(k, it, i)).join('');
+    });
+  }
+  document.querySelector('.form-col').addEventListener('input', e => {
+    const t = e.target;
+    if (!t.dataset.k) return;
+    state[SK[t.dataset.k]][+t.dataset.i][t.dataset.f] = t.value;
+    renderPreview();
+  });
+  document.querySelector('.form-col').addEventListener('click', e => {
+    const add = e.target.closest('[data-add]');
+    if (add) { state[SK[add.dataset.add]].push(blank(add.dataset.add)); renderForm(add.dataset.add); renderPreview(); return; }
+    const rm = e.target.closest('[data-rm]');
+    if (rm) { state[SK[rm.dataset.rm]].splice(+rm.dataset.i, 1); renderForm(rm.dataset.rm); renderPreview(); }
+  });
+
+  // ---------- Key competencies (chips) ----------
+  const compInput = $('compInput');
+  const chipsBox = document.querySelector('[data-chips]');
+  function addComp(raw) {
+    raw.split(/[,،\n]/).map(tr).filter(Boolean).forEach(s => {
+      if (!state.comp.some(x => x.toLowerCase() === s.toLowerCase())) state.comp.push(s);
+    });
+    renderChips(); renderPreview();
+  }
+  function renderChips() {
+    chipsBox.innerHTML = state.comp.map((s, i) =>
+      `<span class="chip">${esc(s)}<button type="button" data-ci="${i}" aria-label="حذف">×</button></span>`).join('');
+  }
+  chipsBox.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    state.comp.splice(+b.dataset.ci, 1); renderChips(); renderPreview();
+  });
+  compInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',' || e.key === '،') {
+      e.preventDefault();
+      if (tr(compInput.value)) { addComp(compInput.value); compInput.value = ''; }
+    } else if (e.key === 'Backspace' && !compInput.value && state.comp.length) {
+      state.comp.pop(); renderChips(); renderPreview();
+    }
+  });
+  compInput.addEventListener('paste', e => {
+    const text = (e.clipboardData || window.clipboardData).getData('text');
+    if (/[,،\n]/.test(text)) { e.preventDefault(); addComp(text); }
+  });
+  compInput.addEventListener('blur', () => { if (tr(compInput.value)) { addComp(compInput.value); compInput.value = ''; } });
+
+  // ---------- Preview ----------
+  const bullets = (arr) => arr.length ? `<ul class="r-list">${arr.map(x => `<li dir="auto">${esc(x)}</li>`).join('')}</ul>` : '';
+  const used = (o) => Object.values(o).some(v => tr(v));
+
+  function renderPreview() {
+    const L = H[state.lang];
+    const sheet = $('resume');
+    sheet.setAttribute('dir', state.lang === 'ar' ? 'rtl' : 'ltr');
+    sheet.setAttribute('lang', state.lang);
+
+    const edu = state.edu.filter(used), proj = state.proj.filter(used), train = state.train.filter(used);
+    const tech = state.tech.filter(used), langs = state.langs.filter(used);
+    const contacts = [['phone', state.phone], ['email', state.email], ['link', state.link], ['dob', state.dob]]
+      .filter(c => tr(c[1]));
+    const hasHead = tr(state.name) || contacts.length;
+    const hasAny = hasHead || tr(state.summary) || edu.length || proj.length || train.length || tech.length || state.comp.length || langs.length;
+
+    $('pdfBtn').disabled = !hasAny;
+
+    if (!hasAny) {
+      sheet.innerHTML = `<div class="empty-state"><div><div class="big">📝</div><p>${esc(L.empty)}</p></div></div>`;
+      fitPreview(); return;
+    }
+
+    let html = '';
+    if (hasHead) {
+      html += `<div class="r-head">
+        ${tr(state.name) ? `<div class="r-name" dir="auto">${esc(tr(state.name))}</div>` : ''}
+        ${contacts.length ? `<div class="r-contact">${contacts.map(([k, v]) =>
+          `<span dir="auto">${esc(L[k])}: <span dir="ltr" style="unicode-bidi:isolate">${esc(tr(v))}</span></span>`).join('<span class="sep">|</span>')}</div>` : ''}
+      </div>`;
+    }
+    if (tr(state.summary)) {
+      html += `<div class="r-sec"><h3>${L.summary}</h3><div class="r-text" dir="auto">${esc(tr(state.summary))}</div></div>`;
+    }
+    if (edu.length || proj.length) {
+      html += `<div class="r-sec"><h3>${L.edu}</h3>`;
+      html += edu.map(x => `<div class="r-item">
+          <div class="r-row"><b dir="auto">${esc(tr(x.degree))}</b><span class="r-date" dir="auto">${esc(tr(x.period))}</span></div>
+          ${tr(x.school) ? `<div class="r-sub" dir="auto">${esc(tr(x.school))}</div>` : ''}
+          ${tr(x.gpa) ? `<div dir="auto">${esc(L.gpa)}: ${esc(tr(x.gpa))}</div>` : ''}
+          ${bullets(lines(x.extra))}
+        </div>`).join('');
+      html += proj.map(x => `<div class="r-item">
+          ${tr(x.title) ? `<b dir="auto">${esc(tr(x.title))}</b>` : ''}
+          ${bullets(lines(x.details))}
+        </div>`).join('');
+      html += `</div>`;
+    }
+    if (train.length) {
+      html += `<div class="r-sec"><h3>${L.train}</h3>` + train.map(x => `<div class="r-item">
+          ${tr(x.org) ? `<b dir="auto">${esc(tr(x.org))}</b>` : ''}
+          ${tr(x.desc) ? `<div class="r-text" dir="auto">${esc(tr(x.desc))}</div>` : ''}
+        </div>`).join('') + `</div>`;
+    }
+    if (tech.length) {
+      html += `<div class="r-sec"><h3>${L.tech}</h3><ul class="r-list">` + tech.map(x =>
+        `<li dir="auto">${tr(x.cat) ? `<b>${esc(tr(x.cat))}:</b> ` : ''}${esc(tr(x.items))}</li>`).join('') + `</ul></div>`;
+    }
+    if (state.comp.length) {
+      html += `<div class="r-sec"><h3>${L.comp}</h3><ul class="r-list">` + state.comp.map(s => `<li dir="auto">${esc(s)}</li>`).join('') + `</ul></div>`;
+    }
+    if (langs.length) {
+      html += `<div class="r-sec"><h3>${L.lang}</h3><ul class="r-list">` + langs.map(x =>
+        `<li dir="auto"><b>${esc(tr(x.name))}</b>${tr(x.level) ? ': ' + esc(tr(x.level)) : ''}</li>`).join('') + `</ul></div>`;
+    }
+    sheet.innerHTML = html;
+    fitPreview();
+  }
+
+  function fitPreview() {
+    const vp = $('viewport'), sc = $('scaler');
+    const scale = Math.min(1, vp.clientWidth / 794);
+    sc.style.transform = `scale(${scale})`;
+    vp.style.height = ($('resume').offsetHeight * scale) + 'px';
+  }
+  window.addEventListener('resize', fitPreview);
+
+  // ---------- PDF export (preview only) ----------
+  $('pdfBtn').addEventListener('click', async () => {
+    const btn = $('pdfBtn');
+    if (btn.disabled) return;
+    if (typeof html2pdf === 'undefined') { alert('تعذّر تحميل مكتبة PDF. تأكد من اتصالك بالإنترنت ثم أعد المحاولة.'); return; }
+    const original = btn.textContent;
+    btn.disabled = true; btn.textContent = 'جارٍ التجهيز...';
+
+    const host = document.createElement('div');
+    host.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;background:#fff;';
+    const clone = $('resume').cloneNode(true);
+    clone.style.minHeight = '0';
+    host.appendChild(clone);
+    document.body.appendChild(host);
+
+    const fileName = (tr(state.name) || 'resume').replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '_') + '_CV.pdf';
+    try {
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      await html2pdf().set({
+        margin: 0,
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'], avoid: ['.r-item'] }
+      }).from(clone).save();
+    } catch (err) {
+      console.error(err);
+      alert('حدث خطأ أثناء إنشاء ملف PDF.');
+    } finally {
+      host.remove();
+      btn.textContent = original;
+      btn.disabled = false;
+      renderPreview();
+    }
+  });
+
+  // ---------- Clear all ----------
+  $('clearBtn').addEventListener('click', () => {
+    if (!confirm('هل تريد مسح كل البيانات؟')) return;
+    Object.keys(simple).forEach(id => { $(id).value = ''; state[simple[id]] = ''; });
+    ['edu', 'proj', 'train', 'tech'].forEach(k => state[k] = [blank(k)]);
+    state.langs = [blank('lang')]; state.comp = [];
+    compInput.value = '';
+    renderForm(); renderChips(); renderPreview();
+  });
+
+  // ---------- Init (everything empty) ----------
+  renderForm(); renderChips(); renderPreview();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitPreview);
+})();
+</script>
+</body>
+</html>
