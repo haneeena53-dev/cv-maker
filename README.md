@@ -1,5 +1,5 @@
 # cv-maker
-# Resume Builder
+
 
 A lightweight, frontend-only web app for building a clean, A4-ready resume in the browser. Fill in a form, watch the resume update live, and export it as a PDF with one click. Everything runs locally: no backend, no sign-up, no data leaves your device.
 
