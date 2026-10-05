@@ -1,5 +1,4 @@
-# cv-maker
-
+# CV Maker
 
 A lightweight, frontend-only web app for building a clean, A4-ready resume in the browser. Fill in a form, watch the resume update live, and export it as a PDF with one click. Everything runs locally: no backend, no sign-up, no data leaves your device.
 
@@ -8,22 +7,20 @@ A lightweight, frontend-only web app for building a clean, A4-ready resume in th
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
-**Live demo:** https://YOUR-USERNAME.github.io/resume-builder/
+**Live demo:** https://haneeena53-dev.github.io/cv-maker/
 
 ---
 
 ## Table of Contents
 
 - [Features](#features)
-- [Screenshot](#screenshot)
-- [Getting Started](#getting-started)
 - [Usage](#usage)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
-- [License](#license)
+
 - [نبذة بالعربية](#نبذة-بالعربية)
 
 ## Features
@@ -40,11 +37,14 @@ A lightweight, frontend-only web app for building a clean, A4-ready resume in th
 
 
 
-Notes:
 
-- In multi-line fields, write one bullet per line.
-- Empty fields and empty sections are omitted from the output.
-- Long resumes paginate automatically, but a single page gives the cleanest result.
+## Usage
+
+1. Fill in the form sections.
+2. Review the live preview.
+3. Choose the resume language (English or Arabic) from the top bar.
+4. Click **Download PDF**. The file is named after the name you entered, for example `Your_Name_CV.pdf`.
+
 
 ## Tech Stack
 
@@ -73,7 +73,7 @@ Form fields  --input events-->  State object  --render()-->  Live preview
 ## Project Structure
 
 ```
-resume-builder/
+cv-maker/
 ├── index.html    # HTML, CSS and JavaScript in a single file
 └── README.md
 ```
@@ -87,32 +87,14 @@ resume-builder/
 - [ ] Drag-and-drop section reordering
 - [ ] Offline support by bundling the PDF library
 
-## Contributing
 
-Contributions are welcome.
 
-1. Fork the repository.
-2. Create a branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m "Add your feature"`
-4. Push the branch: `git push origin feature/your-feature`
-5. Open a pull request.
-
-For bugs and feature requests, please open an issue.
-
-## License
-
-Released under the [MIT License](LICENSE).
-
----
-
-# نبذة بالعربية
-
-**منشئ السيرة الذاتية** تطبيق ويب بسيط يعمل بالكامل داخل المتصفح دون خادم أو تسجيل دخول. تملئين النموذج
-فتظهر السيرة الذاتية أمامك لحظة بلحظة، ثم تنزّلينها بملف PDF بحجم A4 بضغطة واحدة.
+**منشئ السيرة الذاتية** تطبيق ويب بسيط يعمل بالكامل داخل المتصفح دون خادم أو تسجيل دخول. تملئين النموذج فتظهر السيرة الذاتية أمامك لحظة بلحظة، ثم تنزّلينها بملف PDF بحجم A4 بضغطة واحدة.
 
 **المميزات**
 
 - معاينة حية تتحدث مع كل حرف.
 - تصدير السيرة الذاتية فقط إلى PDF بجودة عالية.
 - سيرة بالإنجليزية أو بالعربية مع دعم الكتابة من اليمين إلى اليسار.
-- أقسام كاملة: الملخص المهني، التعليم، المشاريع، التدريب، المهارات التقنية، الكفاءات، اللغات
+- أقسام كاملة: الملخص المهني، التعليم، المشاريع، التدريب، المهارات التقنية، الكفاءات، اللغات.
+- النموذج يبدأ فارغاً بالكامل، ولا يتم حفظ أي بيانات
